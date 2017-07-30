@@ -15,7 +15,8 @@ int main(int argc, char *argv[])
 	pcap_t *handle;
 	struct pcap_pkthdr header;
 	const u_char *packet;
-	struct network_pack network;
+	struct network_pack attacker;
+	struct network_pack victim;
 
 	//How to Use//
 	printf("//////////How to use//////////\n");
@@ -40,7 +41,7 @@ int main(int argc, char *argv[])
 	
 	printf("Device: %s\n\n", dev);
 
-	get_network_info(dev, &network);
+	get_network_info(dev, &attacker);
 	
 	return(0);
 }
