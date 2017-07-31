@@ -2,10 +2,13 @@
 
 void arp_request(pcap_t *handle, struct network_pack *network)
 {
-	struct ether_header ether;
+	struct ether_header ether, ether_reply;
 	struct ether_addr dst, src;
-	struct ether_arp arp;
+	struct ether_arp arp, arp_reply;
 	u_char packet[sizeof(struct ether_header) + sizeof(struct ether_arp)];
+	const u_char *reply;
+	int status = 0;
+	char imm[50];
 
 	ether.ether_type = htons(ETHERTYPE_ARP); 
 
@@ -29,4 +32,41 @@ void arp_request(pcap_t *handle, struct network_pack *network)
 
 	memcpy(packet, &ether, sizeof(struct ether_header));
 	memcpy(packet+sizeof(struct ether_header), &arp, sizeof(struct ether_arp));
+
+	while(1) 
+	{
+    	if(pcap_sendpacket(handle, packet, sizeof(packet)) == -1)
+    	{
+    		printf("packet send error\n");
+    		continue;
+    	}
+
+    	status = pcap_next_ex(handle, &header, &reply);
+
+    	if(status < 1)
+    		continue;
+
+    	ether_reply = (struct ether_header*)reply;
+			
+		if(ntohs(ether_reply->ether_type) != ETHERTYPE_ARP)
+			continue;
+
+		arp_reply = (struct ether_arp *)(reply+14);
+		
+		if(ntohs(arp_reply->arp_op) != ARPOP_REPLY)
+			continue;
+
+		if(memcmp(network->dst_ip, arp_reply->arp_spa, sizeof(struct in_addr)) !=0)
+			continue;
+
+		if(memcmp(network->src_ip, arp_reply->arp_tpa, sizeof(struct in_addr)) !=0)
+			continue;
+
+		memcpy(network->dst_mac->ether_addr_octet, arp_reply->arp_sha, ETHER_ADDR_LEN);
+
+		ether_ntoa_r(arp_reply->arp_sha, imm);
+		
+		printf("MAC: %s\n\n", imm);
+			break;
+    }
 }
