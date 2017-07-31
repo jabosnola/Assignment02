@@ -26,7 +26,7 @@ void arp_request(pcap_t *handle, struct network_pack *network)
 	arp.arp_op = htons(ARPOP_REQUEST);
 	memcpy(&arp.arp_sha, &network->src_mac, ETHER_ADDR_LEN);
 
-	memcpy(&arp.arp_spa, &network->src_mac, sizeof(struct in_addr));
+	memcpy(&arp.arp_spa, &network->src_ip, sizeof(struct in_addr));
 	ether_aton_r("00:00:00:00:00:00", &src);
 	memcpy(&arp.arp_tha, &src, ETHER_ADDR_LEN);
 	memcpy(&arp.arp_tpa, &network->dst_ip, sizeof(struct in_addr));
@@ -41,7 +41,6 @@ void arp_request(pcap_t *handle, struct network_pack *network)
     		printf("packet send error\n");
     		continue;
     	}
-
     	status = pcap_next_ex(handle, &header, &reply);
 
     	if(status < 1)
@@ -62,7 +61,7 @@ void arp_request(pcap_t *handle, struct network_pack *network)
 
 		if(memcmp(&network->src_ip, arp_reply->arp_tpa, sizeof(struct in_addr)) !=0)
 			continue;
-
+		
 		memcpy(network->dst_mac.ether_addr_octet, arp_reply->arp_sha, ETHER_ADDR_LEN);
 
 		ether_ntoa_r(arp_reply->arp_sha, imm);

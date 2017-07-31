@@ -10,14 +10,14 @@ void send_arp(pcap_t *handle, struct network_pack *network1, struct network_pack
 
 	memcpy(ether.ether_dhost, &network2->dst_mac, ETHER_ADDR_LEN);
 
-	memcpy(ether.ether_shost, &network2->src_mac, ETHER_ADDR_LEN);
+	memcpy(ether.ether_shost, &network1->src_mac, ETHER_ADDR_LEN);
 
 	arp.arp_hrd = htons(ARPHRD_ETHER);
 	arp.arp_pro = htons(ETHERTYPE_IP);
 	arp.arp_hln = ETHER_ADDR_LEN;
 	arp.arp_pln = sizeof(struct in_addr);
 	arp.arp_op = htons(ARPOP_REPLY);
-	memcpy(&arp.arp_sha, &network2->src_mac, ETHER_ADDR_LEN);
+	memcpy(&arp.arp_sha, &network1->src_mac, ETHER_ADDR_LEN);
 	
 	memcpy(&arp.arp_spa, &network1->dst_ip, sizeof(struct in_addr));
 	memcpy(&arp.arp_tha, &network2->dst_mac, ETHER_ADDR_LEN);

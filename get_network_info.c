@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <netinet/ether.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include "get_network_info.h"
 
 void get_network_info(char *dev, struct network_pack *network){
-	char cmd[200], imm[50];
+	char cmd[200], imm[sizeof(struct in_addr)*4], buf[sizeof(struct in_addr)*4];
 	FILE *fp;
-
+	ulong ipv4_addr;
 	//IP address//
 	sprintf(cmd, "ifconfig | grep -A 1 '%s' | grep 'inet addr' | awk '{print $2}' | awk -F':' '{print $2}'",dev);
 	fp = popen(cmd, "r");

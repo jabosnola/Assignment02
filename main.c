@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 	const u_char *packet;
 	struct network_pack a_g;
 	struct network_pack a_v;
+	char buf[1000];
 	//How to Use//
 	printf("//////////How to use//////////\n");
 	printf("agv[1] : DEVICE\n");
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
 	printf("Device: %s\n\n", dev);
 
 	get_network_info(dev, &a_g);
+	get_network_info(dev, &a_v);
 	arp_request(handle, &a_g);
 	arp_request(handle, &a_v);
 	send_arp(handle, &a_g, &a_v);
