@@ -3,8 +3,6 @@
 
 struct network_pack
 {
-	struct in_addr src_ip;
-	struct ether_addr src_mac;
-	struct in_addr dst_ip;
-	struct ether_addr dst_mac;
+	struct in_addr ip;
+	struct ether_addr mac;
 };

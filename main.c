@@ -13,11 +13,9 @@ int main(int argc, char *argv[])
 {
 	char *dev, errbuf[PCAP_ERRBUF_SIZE];
 	pcap_t *handle;
-	struct pcap_pkthdr header;
-	const u_char *packet;
-	struct network_pack a_g;
-	struct network_pack a_v;
-	char buf[1000];
+	struct network_pack attacker;
+	struct network_pack sender;
+	struct network_pack target;
 	//How to Use//
 	printf("//////////How to use//////////\n");
 	printf("agv[1] : DEVICE\n");
@@ -31,8 +29,8 @@ int main(int argc, char *argv[])
 	}
 
 	dev = argv[1];
-	inet_aton(argv[2], &a_v.dst_ip);
-	inet_aton(argv[3], &a_g.dst_ip);
+	inet_aton(argv[2], &sender.ip);
+	inet_aton(argv[3], &target.ip);
 
 	handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
 	if (handle == NULL) {
@@ -42,11 +40,10 @@ int main(int argc, char *argv[])
 	
 	printf("Device: %s\n\n", dev);
 
-	get_network_info(dev, &a_g);
-	get_network_info(dev, &a_v);
-	arp_request(handle, &a_g);
-	arp_request(handle, &a_v);
-	send_arp(handle, &a_g, &a_v);
+	get_network_info(dev, &attacker);
+	arp_request(handle, &attacker, &target);
+	arp_request(handle, &attacker, &sender);
+	send_arp(handle, &attacker, &target, &sender);
 	
 	return(0);
 }
