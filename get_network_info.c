@@ -21,14 +21,4 @@ void get_network_info(char *dev, struct network_pack *network){
 	pclose(fp);
 	printf("Attacker's MAC: %s\n", imm);
 	ether_aton_r(imm, &network->src_mac);
-	//gateway IP address//
-	sprintf(cmd, "netstat -rn |grep -A 1 'Gateway' | awk '{print $2}' | awk '{print $1}' | tail -n 1");
-
-	fp=popen(cmd, "r");
-	fgets(imm, sizeof(imm), fp);
-	pclose(fp);
-
-	printf("Attacker's Gateway IP: %s\n", imm);
-
-	inet_pton(AF_INET, imm, &network->gate_ip);
 }

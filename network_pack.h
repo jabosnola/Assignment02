@@ -7,6 +7,4 @@ struct network_pack
 	struct ether_addr src_mac;
 	struct in_addr dst_ip;
 	struct ether_addr dst_mac;
-	struct in_addr gate_ip;
-	struct ether_addr gate_mac;
 };
